@@ -1,0 +1,12 @@
+# Copyright 2020 Openbase, Inc.
+---
+- import_playbook: 01_deploy_first_node.yml
+- import_playbook: 02_configure_compute_manager.yml
+- import_playbook: 03_deploy_second_third_nsxt_node.yml
+- import_playbook: 04_add_nsx_license.yml
+- import_playbook: 05_virtual_ip.yml
+- import_playbook: 06_transport_zones.yml
+- import_playbook: 07_uplink_profiels.yml
+- import_playbook: 08_ip_pools.yml
+- import_playbook: 09_transport_nodes_edge.yml
+- import_playbook: 10_setup_edge_cluster.yml

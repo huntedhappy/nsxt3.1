@@ -1,0 +1,84 @@
+# Copyright 2018 VMware, Inc.
+# SPDX-License-Identifier: BSD-2-Clause OR GPL-3.0-only
+---
+hostname: "nsx.oblab.local"
+username: "admin"
+password: "Pass0rd"
+vip: "10.253.1.100"
+state: "present"
+#state: "absent"
+validate_certs: False
+
+ip_pools:
+- display_name: IPPool-IPV4-1
+  allocation_ranges:
+  - start: "10.112.201.28"
+    end: "10.112.201.35"
+  cidr: "10.112.201.0/24"
+
+- display_name: IPPool-IPV4-2
+  allocation_ranges:
+  - start: "10.112.202.28"
+    end: "10.112.202.35"
+  cidr: "10.112.202.0/24"
+
+transportzones:
+- display_name: "TZ1"
+  transport_type: "OVERLAY"
+  description: NSX Configured Overlay Transport Zone
+  host_switch_name: "nvds"
+
+- display_name: "TZ2"
+  transport_type: "VLAN"
+  description: NSX Configured VLAN Transport Zone
+  host_switch_name: "nvds"
+
+edge_uplink_profiles:
+  - display_name: nsx-edge-single-uplink-profile-1
+    teaming:
+      active_list:
+        - uplink_name: "uplink-1"
+          uplink_type: PNIC
+      policy: FAILOVER_ORDER
+    transport_vlan: 0
+    mtu: 9000
+
+  - display_name: nsx-edge-multi-uplink-profile-1
+    teaming:
+      active_list:
+        - uplink_name: uplink-1
+          uplink_type: PNIC
+        - uplink_name: uplink-2
+          uplink_type: PNIC
+      policy: LOADBALANCE_SRCID
+    transport_vlan: 0
+    mtu: 9000
+
+  - display_name: nsx-edge-vtep-profile
+    teaming:
+      active_list:
+        - uplink_name: uplink-1
+          uplink_type: PNIC
+      policy: FAILOVER_ORDER
+    transport_vlan: 0
+    mtu: 9000
+
+host_uplink_profiles:
+  - display_name: nsx-esxi-vtep-profile
+    teaming:
+      active_list:
+        - uplink_name: uplink-1
+          uplink_type: PNIC
+        - uplink_name: uplink-2
+          uplink_type: PNIC
+      policy: LOADBALANCE_SRCID
+    transport_vlan: 0
+
+compute_managers:
+- display_name: "VC1"
+  server: "10.161.129.87"
+  origin_type: vCenter
+  credential_type: UsernamePasswordLoginCredential
+  username: "administrator@vsphere.local"
+  password: "Admin!23"
+  thumbprint: "46:1E:31:DD:0B:37:4C:F0:91:5B:49:A1:A1:94:B5:DF:82:93:90:52:D9:68:0F:86:C8:CA:6C:34:CB:82:D7:D5"

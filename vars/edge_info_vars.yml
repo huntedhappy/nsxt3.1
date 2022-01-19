@@ -1,0 +1,112 @@
+# Copyright 2018 VMware, Inc.
+# SPDX-License-Identifier: BSD-2-Clause OR GPL-3.0-only
+
+---
+hostname: "10.253.1.100"
+username: "admin"
+password: 'Passw0rd'
+validate_certs: False
+state: present
+#state: absent
+
+
+transport_nodes:
+  - display_name: edge01
+    description: NSX Edge Node 01
+    host_switches:
+    - host_switch_name: nsxHostSwitch
+      host_switch_type: NVDS
+      host_switch_mode: STANDARD
+      host_switch_profiles:
+      - { name: nsx-edge-vtep-profile, type: UplinkHostSwitchProfile }
+      pnics:
+      - { device_name: fp-eth0, uplink_name: uplink-1 }
+      ip_assignment_spec: {resource_type: StaticIpPoolSpec, ip_pool_name: IPPool-IPV4-1}
+      transport_zone_endpoints:
+      - { transport_zone_name: TZ1 }
+    - host_switch_name: nsxHostSwitch2
+      host_switch_type: NVDS
+      host_switch_mode: STANDARD
+      host_switch_profiles:
+      - { name: nsx-edge-single-nic-uplink-profile, type: UplinkHostSwitchProfile }
+      pnics:
+      - { device_name: fp-eth1, uplink_name: uplink-1 }
+      transport_zone_endpoints:
+      - { transport_zone_name: TZ2 }
+    node_deployment_info:
+      deployment_type: VIRTUAL_MACHINE
+      resource_type: EdgeNode
+      display_name: edge01
+      deployment_config:
+        form_factor: SMALL
+        vm_deployment_config:
+          vc_name: vcsa01
+          vc_username: administrator@vsphere.local
+          vc_password: Openbase!234
+          storage: SYNOLOGY
+          compute: mgmt.c
+          host: esxi01.oblab.local
+          data_networks: [ VM Network, VM Network, VM Network ]
+          default_gateway_addresses: [ 10.253.1.1 ]
+          management_network: VM Network
+          management_port_subnets: [ { ip_addresses: [ 10.253.1.32 ], prefix_length: 24 } ]
+          placement_type: VsphereDeploymentConfig
+        node_user_settings: { cli_username: admin, root_password: Openbase!234, cli_password: Openbase!234, audit_username: audit, audit_password: Openbase!234 }
+      node_settings:
+        allow_ssh_root_login: True
+        enable_ssh: True
+        hostname: edge01.oblab.local
+
+  - display_name: edge02
+    description: NSX Edge Node 02
+    host_switches:
+    - host_switch_name: nsxHostSwitch
+      host_switch_type: NVDS
+      host_switch_mode: STANDARD
+      host_switch_profiles:
+      - { name: nsx-edge-vtep-profile, type: UplinkHostSwitchProfile }
+      pnics:
+      - { device_name: fp-eth0, uplink_name: uplink-1 }
+      ip_assignment_spec: {resource_type: StaticIpPoolSpec, ip_pool_name: IPPool-IPV4-1}
+      transport_zone_endpoints:
+      - { transport_zone_name: TZ1 }
+    - host_switch_name: nsxHostSwitch2
+      host_switch_type: NVDS
+      host_switch_mode: STANDARD
+      host_switch_profiles:
+      - { name: nsx-edge-single-nic-uplink-profile, type: UplinkHostSwitchProfile }
+      pnics:
+      - { device_name: fp-eth1, uplink_name: uplink-1 }
+      transport_zone_endpoints:
+      - { transport_zone_name: TZ2 }
+    node_deployment_info:
+      deployment_type: VIRTUAL_MACHINE
+      resource_type: EdgeNode
+      display_name: edge02
+      deployment_config:
+        form_factor: SMALL
+        vm_deployment_config:
+          vc_name: vcsa01
+          vc_username: administrator@vsphere.local
+          vc_password: Openbase!234
+          storage: SYNOLOGY
+          compute: mgmt.c
+          host: esxi02.oblab.local
+          data_networks: [ VM Network, VM Network, VM Network ]
+          default_gateway_addresses: [ 10.253.1.1 ]
+          management_network: VM Network
+          management_port_subnets: [ { ip_addresses: [ 10.253.1.33 ], prefix_length: 24 } ]
+          placement_type: VsphereDeploymentConfig
+        node_user_settings: { cli_username: admin, root_password: Openbase!234, cli_password: Openbase!234, audit_username: audit, audit_password: Openbase!234 }
+      node_settings:
+        allow_ssh_root_login: True
+        enable_ssh: True
+        hostname: edge02.oblab.local
+
+edge_clusters:
+  display_name: Edge-Cluster-01
+  cluster_profile_bindings:
+  - { profile_name: nsx-default-edge-high-availability-profile }
+  members:
+  - { transport_node_name: edge01 }
+  - { transport_node_name: edge02 }
